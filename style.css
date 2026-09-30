@@ -1,21 +1,20 @@
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
 }
 
 body {
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  margin: 0;
   min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 20px;
+  align-items: flex-start;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #6a82fb, #fc5c7d);
+  font-family: 'Segoe UI', Arial, sans-serif;
 }
 
 .container {
-  background: #fff;
+  background: #ffffff;
   width: 100%;
   max-width: 480px;
   border-radius: 12px;
@@ -25,7 +24,7 @@ body {
 
 h1 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-top: 0;
   color: #333;
 }
 
@@ -37,86 +36,91 @@ h1 {
 
 #todo-input {
   flex: 1;
-  padding: 10px 14px;
+  padding: 10px 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 #todo-input:focus {
   outline: none;
-  border-color: #2575fc;
+  border-color: #6a82fb;
 }
 
 #todo-form button {
   padding: 10px 18px;
-  background: #2575fc;
-  color: #fff;
   border: none;
   border-radius: 6px;
+  background: #6a82fb;
+  color: #fff;
+  font-size: 15px;
   cursor: pointer;
-  font-size: 16px;
-  transition: background 0.2s;
+  transition: background 0.2s ease;
 }
 
 #todo-form button:hover {
-  background: #1a5edb;
+  background: #5a6fe0;
 }
 
 #todo-list {
   list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .todo-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   padding: 12px 10px;
   border-bottom: 1px solid #eee;
-  gap: 10px;
 }
 
 .todo-item:last-child {
   border-bottom: none;
 }
 
-.todo-text-wrap {
+.todo-left {
   display: flex;
   align-items: center;
   gap: 10px;
   flex: 1;
-  overflow: hidden;
+  min-width: 0;
 }
 
-.todo-text {
-  word-break: break-word;
+.todo-left span {
+  overflow-wrap: anywhere;
 }
 
-.todo-item.completed .todo-text {
+.todo-item.completed span {
   text-decoration: line-through;
   color: #999;
 }
 
 .delete-btn {
-  background: #ff4d4f;
-  color: #fff;
+  background: #fc5c7d;
   border: none;
-  border-radius: 6px;
+  color: #fff;
+  border-radius: 5px;
   padding: 6px 10px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .delete-btn:hover {
-  background: #d9363e;
+  background: #e14b6b;
 }
 
 .empty-message {
   text-align: center;
-  color: #888;
-  margin-top: 10px;
+  color: #999;
+  margin-top: 20px;
 }
 
-.hidden {
-  display: none;
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
 }

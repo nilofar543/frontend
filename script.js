@@ -1,107 +1,96 @@
-// Change this if your backend runs on a different URL/port
-const API_URL = 'http://localhost:5000/api/todos';
-
 const form = document.getElementById('todo-form');
 const input = document.getElementById('todo-input');
 const list = document.getElementById('todo-list');
 const emptyMessage = document.getElementById('empty-message');
 
-// Load all todos when the page opens
-document.addEventListener('DOMContentLoaded', loadTodos);
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const text = input.value.trim();
-  if (!text) return;
-  await addTodo(text);
-  input.value = '';
-});
-
-async function loadTodos() {
+// Fetch and render all todos
+async function fetchTodos() {
   try {
     const res = await fetch(API_URL);
     const todos = await res.json();
     renderTodos(todos);
   } catch (err) {
-    console.error('Failed to load todos:', err);
-    alert('Could not connect to the server. Is the backend running?');
+    console.error('Error fetching todos:', err);
+    list.innerHTML = '<li>Could not load tasks. Is the backend running?</li>';
   }
 }
 
-async function addTodo(text) {
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
-    });
-    if (!res.ok) throw new Error('Failed to add todo');
-    await loadTodos();
-  } catch (err) {
-    console.error(err);
-    alert('Could not add task.');
-  }
-}
-
-async function toggleTodo(id, completed) {
-  try {
-    await fetch(`${API_URL}/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ completed: !completed })
-    });
-    await loadTodos();
-  } catch (err) {
-    console.error(err);
-    alert('Could not update task.');
-  }
-}
-
-async function deleteTodo(id) {
-  try {
-    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-    await loadTodos();
-  } catch (err) {
-    console.error(err);
-    alert('Could not delete task.');
-  }
-}
-
+// Render todos to the DOM
 function renderTodos(todos) {
   list.innerHTML = '';
-
-  if (todos.length === 0) {
-    emptyMessage.classList.remove('hidden');
-    return;
-  }
-  emptyMessage.classList.add('hidden');
+  emptyMessage.hidden = todos.length !== 0;
 
   todos.forEach((todo) => {
     const li = document.createElement('li');
     li.className = 'todo-item' + (todo.completed ? ' completed' : '');
 
-    const wrap = document.createElement('div');
-    wrap.className = 'todo-text-wrap';
+    const left = document.createElement('div');
+    left.className = 'todo-left';
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = todo.completed;
-    checkbox.addEventListener('change', () => toggleTodo(todo._id, todo.completed));
+    checkbox.addEventListener('change', () => toggleComplete(todo._id, checkbox.checked));
 
     const span = document.createElement('span');
-    span.className = 'todo-text';
-    span.textContent = todo.text;
+    span.textContent = todo.title;
 
-    wrap.appendChild(checkbox);
-    wrap.appendChild(span);
+    left.appendChild(checkbox);
+    left.appendChild(span);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
     deleteBtn.textContent = 'Delete';
     deleteBtn.addEventListener('click', () => deleteTodo(todo._id));
 
-    li.appendChild(wrap);
+    li.appendChild(left);
     li.appendChild(deleteBtn);
     list.appendChild(li);
   });
 }
+
+// Add a new todo
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title = input.value.trim();
+  if (!title) return;
+
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title })
+    });
+    input.value = '';
+    fetchTodos();
+  } catch (err) {
+    console.error('Error adding todo:', err);
+  }
+});
+
+// Toggle completed state
+async function toggleComplete(id, completed) {
+  try {
+    await fetch(`${API_URL}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ completed })
+    });
+    fetchTodos();
+  } catch (err) {
+    console.error('Error updating todo:', err);
+  }
+}
+
+// Delete a todo
+async function deleteTodo(id) {
+  try {
+    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    fetchTodos();
+  } catch (err) {
+    console.error('Error deleting todo:', err);
+  }
+}
+
+// Initial load
+fetchTodos();
