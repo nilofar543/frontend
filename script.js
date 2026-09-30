@@ -33,7 +33,7 @@ function renderTodos(todos) {
     checkbox.addEventListener('change', () => toggleComplete(todo._id, checkbox.checked));
 
     const span = document.createElement('span');
-    span.textContent = todo.title;
+    span.textContent = todo.text;
 
     left.appendChild(checkbox);
     left.appendChild(span);
@@ -59,7 +59,7 @@ form.addEventListener('submit', async (e) => {
     await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title })
+      body: JSON.stringify({ text: title })
     });
     input.value = '';
     fetchTodos();
